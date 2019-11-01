@@ -1,0 +1,1 @@
+gateway.exe --addr=:9999 --registry=etcdv3://localhost:2379 --basepath=/rpcx_namelist
