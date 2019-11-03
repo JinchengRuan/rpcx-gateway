@@ -15,7 +15,7 @@ import (
 var (
 	addr       = flag.String("addr", ":9999", "http server address")
 	st         = flag.String("st", "http1", "server type: http1 or h2c")
-	registry   = flag.String("registry", "etcdv3://localhost:2379,localhost:2579", "registry address")
+	registry   = flag.String("registry", "etcdv3://localhost:2379", "registry address")
 	basePath   = flag.String("basepath", "/rpcx_namelist", "basepath for zookeeper, etcd and consul")
 	failmode   = flag.Int("failmode", int(client.Failover), "failMode, Failover in default")
 	selectMode = flag.Int("selectmode", int(client.RoundRobin), "selectMode, RoundRobin in default")
@@ -23,6 +23,8 @@ var (
 
 func main() {
 	flag.Parse()
+
+	log.Printf("网关开启=>addr:%s,st:%s,registry:%s,basePath:%s,failmode:%d,selectMode:%d", *addr, *st, *registry, *basePath, *failmode, *selectMode)
 
 	d, err := createServiceDiscovery(*registry)
 	if err != nil {
@@ -57,7 +59,7 @@ func createServiceDiscovery(regAddr string) (client.ServiceDiscovery, error) {
 	case "etcd":
 		addrs := strings.Split(regAddr, ",")
 		return client.NewEtcdDiscoveryTemplate(*basePath, addrs, nil), nil
-	case "etcdv3":
+	case "etcdv3": // etcdv3://localhost:2379,localhost:2579
 		addrs := strings.Split(regAddr, ",")
 		return client.NewEtcdV3Discovery(*basePath, "", addrs, nil), nil
 	case "consul":
